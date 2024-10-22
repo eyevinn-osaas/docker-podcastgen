@@ -9,7 +9,7 @@ RUN apt-get -qq update && \
 
 ENV PODCASTGEN_VERSION 2.7
 
-EXPOSE 80
+EXPOSE 8080
 
 VOLUME ["/var/www"]
 
