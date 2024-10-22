@@ -19,10 +19,11 @@ if [[ ! -d $APPDIR ]]; then
 	[[ $? -eq 0 ]] || { ERR "Failed to unzip podcastgen, perhaps file is invalid?"; exit 1; }
 	[[ -d $APPDIR ]] || { ERR "Directory $APPDIR does not exist, aborting."; exit 1; }
 	chown -R www-data:www-data /var/www/
-	sed -i -e "s#^php-docroot\ *=.*#php-docroot\ =\ ${APPDIR}#" \
-		-e "s#^static-safe\ *=\ {{\ PODCASTGEN_DIR\ }}#static-safe\ =\ ${APPDIR}#" \
-		/etc/uwsgi/apps-available/podcastgen.conf
 fi
+
+sed -i -e "s#^php-docroot\ *=.*#php-docroot\ =\ ${APPDIR}#" \
+	-e "s#^static-safe\ *=\ {{\ PODCASTGEN_DIR\ }}#static-safe\ =\ ${APPDIR}#" \
+	/etc/uwsgi/apps-available/podcastgen.conf
 
 MSG "Serving site..."
 
