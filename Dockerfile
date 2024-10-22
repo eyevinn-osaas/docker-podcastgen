@@ -1,9 +1,12 @@
-FROM chambana/uwsgi-php:latest
+FROM debian:bullseye
 
 MAINTAINER Josh King <jking@chambana.net>
 
-RUN apt-get -qq update && \
-	apt-get install -y --no-install-recommends ca-certificates unzip wget php-xml && \
+RUN apt-get update && \
+        apt-get -y upgrade && \
+	apt-get install -y --no-install-recommends ca-certificates \
+          uwsgi-plugin-php php-curl php-json \
+          unzip wget php-xml && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 
