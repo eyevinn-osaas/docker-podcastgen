@@ -23,6 +23,7 @@ fi
 
 sed -i -e "s#^php-docroot\ *=.*#php-docroot\ =\ ${APPDIR}#" \
 	-e "s#^static-safe\ *=\ {{\ PODCASTGEN_DIR\ }}#static-safe\ =\ ${APPDIR}#" \
+        -e "s#^check-static\ *=\ {{\ PODCASTGEN_DIR\ }}#check-static\ =\ ${APPDIR}#" \
 	/etc/uwsgi/apps-available/podcastgen.conf
 
 MSG "Serving site..."
