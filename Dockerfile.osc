@@ -1,0 +1,26 @@
+FROM php:8.2-apache
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends bash ca-certificates unzip wget libxml2-dev libcurl4-openssl-dev libonig-dev && \
+    docker-php-ext-install -j"$(nproc)" xml curl mbstring gettext && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ENV PODCASTGEN_VERSION=3.2.9
+ENV PORT=8080
+
+# Bake the release into the image; the entrypoint unpacks it into the /var/www
+# volume only when no installation exists there yet.
+RUN wget -q -O /opt/podcastgen.zip \
+      https://github.com/PodcastGenerator/PodcastGenerator/releases/download/v${PODCASTGEN_VERSION}/PodcastGenerator-${PODCASTGEN_VERSION}.zip
+
+RUN a2enmod rewrite headers && \
+    printf 'display_errors=Off\nlog_errors=On\nerror_log=/proc/self/fd/2\nerror_reporting=E_ALL & ~E_DEPRECATED\npost_max_size=100M\nupload_max_filesize=100M\nmemory_limit=256M\n' > /usr/local/etc/php/conf.d/podcastgen.ini
+
+COPY podcastgen-apache.conf /etc/apache2/sites-available/000-default.conf
+
+EXPOSE 8080
+VOLUME ["/var/www"]
+
+COPY --chmod=755 osc-entrypoint.sh /usr/local/bin/osc-entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/osc-entrypoint.sh"]
+CMD ["apache2-foreground"]
